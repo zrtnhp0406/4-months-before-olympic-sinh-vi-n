@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define st first
+#define nd second
+//mt19937 rd(chrono::steady_clock::now().time_since_epoch().count());
+const int N=5e5+10;
+int n,m,hsrd[N],in[N],ou[N],H[N],q,timer,h;
+map<int,int> key;
+string s;
+vector<int> ds[N];
+vector<ii> D[N];
+vector<int> pr[N];
+void DFS(int a,int p){
+    in[a]=++timer;
+    for(int v: ds[a]){
+        if(v==p) continue;
+        H[v]=H[a]+1;
+        DFS(v,a);
+    }
+    ou[a]=++timer;
+}
+bool cmp(int a,int b){
+    return in[a]<in[b];
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    srand(time(NULL));
+    for(int i='a'; i<='z'; i++){
+        hsrd[i]=rand()*rand();
+        key[hsrd[i]]=i;
+    }
+    cin>>n>>q;
+    int u,v;
+    for(int i=2; i<=n; i++){
+        cin>>u;
+        ds[u].push_back(i);
+        ds[i].push_back(u);
+    }
+    cin>>s;
+    H[1]=1;
+    DFS(1,1);
+    for(int i=1; i<=n; i++){
+        D[H[i]].push_back({in[i],i});
+        pr[H[i]].push_back(0);
+    }
+    for(int i=1; i<=n; i++){
+        sort(D[i].begin(),D[i].end());
+        if(D[i].size()){
+            pr[i][0]=hsrd[s[D[i][0].nd-1]];
+            for(int j=1; j<D[i].size(); j++){
+                pr[i][j]=(pr[i][j-1]^hsrd[s[D[i][j].nd-1]]);
+            }
+        }
+    }
+    while(q--){
+        cin>>u>>h;
+        int l=lower_bound(D[h].begin(),D[h].end(),make_pair(in[u],0ll))-D[h].begin();
+        int r=upper_bound(D[h].begin(),D[h].end(),make_pair(ou[u],0ll))-D[h].begin();
+        r--;
+        int k=0;
+        if(l<=r && r<D[h].size() && l>=0){
+            if(!l){
+                k=pr[h][r];
+            }
+            else{
+                k=(pr[h][r]^pr[h][l-1]);
+            }
+        }
+        if(!k || key.find(k)!=key.end()){
+            cout<<"Yes\n";
+        }
+        else cout<<"No\n";
+    }
+    return 0;
+}
+
