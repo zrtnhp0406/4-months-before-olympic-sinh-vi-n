@@ -1,0 +1,116 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=2e5+10;
+
+int n,q,F[N],D[N][21],H[N],parent[N],sub[N],sz,mi[N],type,point,ans;
+vector<int> ds[N];
+bool is_cen[N];
+void DFS(int a,int p){
+    for(int v: ds[a]){
+        if(v==p) continue;
+        D[v][0]=a;
+        H[v]=H[a]+1;
+        F[v]=F[a]+1;
+        DFS(v,a);
+    }
+}
+int lca(int a,int b){
+    if(H[a]<H[b]) swap(a,b);
+    for(int i=20; i>=0; i--){
+        if(H[D[a][i]]>=H[b]) a=D[a][i];
+    }
+    if(a==b) return a;
+    for(int i=20; i>=0; i--){
+        if(D[a][i]!=D[b][i]){
+            a=D[a][i];
+            b=D[b][i];
+        }
+    }
+    return D[a][0];
+}
+int dis(int a,int b){
+    return F[a]+F[b]-2*F[lca(a,b)];
+}
+void build_sub(int a,int p){
+    sub[a]=0;
+    for(int v: ds[a]){
+        if(is_cen[v] || v==p) continue;
+        build_sub(v,a);
+        sub[a]+=sub[v];
+    }
+    sub[a]+=1;
+}
+int find_centroid(int a,int p){
+    for(int v: ds[a]){
+        if(v==p) continue;
+        if(is_cen[v]) continue;
+        if(sub[v]>sz/2) return find_centroid(v,a);
+    }
+    return a;
+}
+int build_centroid(int a){
+    build_sub(a,a);
+    sz=sub[a];
+    int u=find_centroid(a,a);
+    is_cen[u]=true;
+    for(int v: ds[u]){
+        if(!is_cen[v]){
+            int C=build_centroid(v);
+            parent[C]=u;
+        }
+    }
+    return u;
+}
+void up(int a){
+    int b=a;
+    while(b!=0){
+        mi[b]=min(mi[b],dis(a,b));
+        b=parent[b];
+    }
+}
+void get(int a){
+    int b=a;
+    while(b!=0){
+        ans=min(ans,mi[b]+dis(a,b));
+        b=parent[b];
+    }
+
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>q;
+    int u,v;
+    for(int i=1; i<n; i++){
+        cin>>u>>v;
+        ds[u].push_back(v);
+        ds[v].push_back(u);
+    }
+    H[1]=1;
+    DFS(1,1);
+    for(int j=1; j<=20; j++){
+        for(int i=1; i<=n; i++){
+            D[i][j]=D[D[i][j-1]][j-1];
+        }
+    }
+    build_centroid(1);
+    for(int i=1; i<=n; i++){
+        mi[i]=1e9;
+    }
+    up(1);
+    for(int i=1; i<=q; i++){
+        cin>>type>>point;
+        if(type==1){
+            up(point);
+        }
+        else{
+            ans=1e9;
+            get(point);
+            cout<<ans<<'\n';
+        }
+    }
+
+
+
+
+    return 0;
+}
