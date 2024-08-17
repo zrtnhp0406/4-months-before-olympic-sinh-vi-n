@@ -1,0 +1,57 @@
+#include<bits/stdc++.h>
+#define int long long
+#define ii pair<int,int>
+#define st first
+#define nd second
+using namespace std;
+const int mod=1e9+7;
+const int N=2e5+10;
+int F[N],n,ans,vF[N],h,w,dp[N];
+ii A[N];
+int lt(int a,int b){
+    if(b==0) return 1;
+    int p=lt(a,b/2);
+    p=p*p%mod;
+    if(b&1) p=p*a%mod;
+    return p;
+}
+int C(int b,int a){
+    return F[a]*vF[a-b]%mod*vF[b]%mod;
+}
+int get(int a,int b){
+    int x=A[b].st-A[a].st;
+    int y=A[b].nd-A[a].nd;
+    return C(x,x+y);
+}
+bool check(int a,int b){
+    return A[a].st<=A[b].st && A[a].nd<=A[b].nd;
+}
+signed main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin>>h>>w>>n;
+    F[0]=1;
+    vF[0]=1;
+    for(int i=1; i<=h+w; i++){
+        F[i]=F[i-1]*i%mod;
+        vF[i]=lt(F[i],mod-2);
+    }
+    for(int i=1; i<=n; i++){
+        cin>>A[i].st>>A[i].nd;
+    }
+    sort(A+1,A+n+1);
+    A[n+1]={h,w};
+    A[0]={1,1};
+    for(int i=1; i<=n+1; i++){
+        dp[i]=get(0,i);
+        for(int j=i-1; j>=1; j--){
+            if(check(j,i)){
+               dp[i]=(dp[i]-dp[j]*get(j,i)%mod+mod)%mod;
+            }
+        }
+    }
+    cout<<dp[n+1];
+
+
+
+    return 0;
+}
