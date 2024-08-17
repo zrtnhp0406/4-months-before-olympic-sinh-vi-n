@@ -1,0 +1,85 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ii pair<int,int>
+#define iii pair<pair<int,int>,int>
+#define st first
+#define nd second
+const int N=3e5+10;
+
+
+int n,vs[N*4],l,r,d,ma,ans;
+vector<int> g[N*4];
+vector<int> ds[N];
+ii A[N];
+priority_queue<iii> pq;
+void build(int id,int l,int r,int u,int v,int val){
+    if(r<u ||l >v){
+        return;
+    }
+    if(u<=l && r<=v){
+        g[id].push_back(val);
+        return;
+    }
+    int mid=(l+r)/2;
+    build(id*2,l,mid,u,v,val);
+    build(id*2+1,mid+1,r,u,v,val);
+}
+void update(int id,int l,int r,int pos){
+    if(r<pos || l>pos) return;
+
+    if(l<=pos && pos<=r){
+        if(!vs[id]){
+        for(int v: g[id]){
+            if(A[v].st<A[pos].st){
+                A[v]=A[pos];
+                A[v].nd++;
+                pq.push({{A[v].st,-A[v].nd},v});
+            }
+            else if(A[v].st==A[pos].st && A[v].nd>A[pos].nd+1){
+                A[v].nd=A[pos].nd+1;
+                pq.push({{A[v].st,-A[v].nd},v});
+            }
+        }
+        vs[id]=true;
+        }
+       // return;
+       if(l==r) return;
+    }
+    int mid=(l+r)/2;
+    if(l<=pos && pos<=mid) update(id*2,l,mid,pos);
+    else update(id*2+1,mid+1,r,pos);
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    freopen("income.inp","r",stdin);
+    freopen("income.out","w",stdout);
+    cin>>n;
+    for(int i=1; i<=n; i++){
+        cin>>A[i].st;
+        A[i].nd=0;
+        ma=max(ma,A[i].st);
+    }
+    for(int i=1; i<=n; i++){
+        cin>>l>>r;
+        build(1,1,n,l,r,i);
+    }
+    for(int i=1; i<=n; i++){
+        //if(A[i].st==ma){
+            pq.push({{A[i].st,0},i});
+        //}
+    }
+    while(!pq.empty()){
+        iii u=pq.top();
+        pq.pop();
+        if(A[u.nd]!=make_pair(u.st.st,-u.st.nd)) continue;
+        //cout<<u.nd<<' ';
+        u.st.nd*=-1;
+        update(1,1,n,u.nd);
+    }
+    ans=0;
+    for(int i=1; i<=n; i++){
+        ans=max(ans,A[i].nd);
+    }
+    cout<<ans+1;
+    return 0;
+}
