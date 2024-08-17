@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=1e5+9;
+int n,cntself[N];
+map <int,int> cnt;
+struct info{
+	int y,id;
+};
+vector <int> a[N],node[N];
+vector <info> query[N];
+bool havecolor[N];
+int res[N],f[N],color[N];
+void dfssize(int x,int pre){
+	f[x]=1;
+	for (int xnew:a[x])
+	  if (xnew!=pre)
+	    {
+	       dfssize(xnew,x);
+	       f[x]+=f[xnew];
+	    }
+}
+void del(int nowcolor){
+	cnt[cntself[nowcolor]]--;
+  if (cnt[cntself[nowcolor]]==0) cnt.erase(cntself[nowcolor]);
+}
+void add(int nowcolor){
+	del(nowcolor);
+	cntself[nowcolor]++;
+	cnt[cntself[nowcolor]]++;
+}
+void dfs(int x,int pre,bool keep){
+	int bigchild=-1,maxx=0;
+	for (int xnew:a[x])
+	  if (xnew!=pre&&f[xnew]>maxx)
+	    {
+	       maxx=f[xnew];
+	       bigchild=xnew;
+	    }
+	for (int xnew:a[x])
+	  if (xnew!=pre&&xnew!=bigchild) dfs(xnew,x,0);
+	if (bigchild!=-1)
+	  {
+	  	dfs(bigchild,x,1);
+	  	swap(node[x],node[bigchild]);
+	  }
+	node[x].push_back(x);
+	add(color[x]);
+	for (int xnew:a[x])
+	  if (xnew!=bigchild&&xnew!=pre)
+	    for (int newnode:node[xnew])
+	      {
+	     	  node[x].push_back(newnode);
+	     	  add(color[newnode]);
+	     	}
+	for (info q_xnew:query[x])
+	  {
+	  	int sum=0;
+	  	for (auto &xnew:cnt)
+	  	  if (xnew.first>=q_xnew.y) sum+=xnew.second;
+	  	res[q_xnew.id]=sum;
+	  }
+	if (!keep)
+	  {
+	  	for (int &xnew:node[x])
+	  	  {
+	  	  	del(color[xnew]);
+	  	  	cntself[color[xnew]]--;
+	  	  	cnt[cntself[color[xnew]]]++;
+	  	  }
+	  }
+}
+signed main(){
+	ios::sync_with_stdio(false);cin.tie(0);
+	int q;
+	cin>>n>>q;
+	int x,y;
+	for (int i=1;i<=n;i++)
+	  cin>>color[i];
+	for (int i=1;i<n;i++)
+      {
+      	cin>>x>>y;
+      	a[x].push_back(y);
+      	a[y].push_back(x);
+      }
+  for (int i=1;i<=q;i++)
+    {
+     	cin>>x>>y;
+     	query[x].push_back({y,i});
+    }
+  dfssize(1,1);
+  dfs(1,1,1);
+  for (int i=1;i<=q;i++)
+    cout<<res[i]<<'\n';
+	return 0;
+}
