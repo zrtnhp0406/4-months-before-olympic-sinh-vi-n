@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define st first
+#define nd second
+const int N=1e5+10;
+
+int n,m,D[N*4],key[N],s,l,r,w,pos,type;
+vector<ii> ds[N*4];
+priority_queue<ii,vector<ii>,greater<ii>> pq;
+void build(int id,int l,int r){
+    if(l==r){
+        key[l]=id;
+        return;
+    }
+    int mid=(l+r)/2;
+    build(id*2,l,mid);
+    build(id*2+1,mid+1,r);
+}
+void addedge(int id,int l,int r,int u,int v,int bit){
+    if(r<u ||l>v) return;
+    if(u<=l && r<=v){
+        if(bit) ds[id].push_back({w,key[pos]});
+        else ds[key[pos]].push_back({w,id});
+        return;
+    }
+    int mid=(l+r)/2;
+    addedge(id*2,l,mid,u,v,bit);
+    addedge(id*2+1,mid+1,r,u,v,bit);
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>m>>s;
+    build(1,1,n);
+    for(int i=1; i<=m; i++){
+        cin>>type;
+        if(type==1){
+            cin>>l>>r>>w;
+            ds[key[l]].push_back({w,r});
+        }
+        else if(type==2){
+            cin>>pos>>l>>r>>w;
+            addedge(1,1,n,l,r,0);
+        }
+        else{
+            cin>>pos>>l>>r>>w;
+            addedge(1,1,n,l,r,1);
+        }
+    }
+    for(int i=1; i<=n*4; i++){
+        D[i]=1e15;
+    }
+    D[key[s]]=0;
+    pq.push({0,key[s]});
+    while(!pq.empty()){
+        ii u=pq.top();
+        pq.pop();
+        if(u.st!=D[u.nd]) continue;
+        for(ii v: ds[u.nd]){
+            if(D[v.nd]>u.st+v.st){
+                D[v.nd]=u.st+v.st;
+                pq.push({D[v.nd],v.nd});
+            }
+        }
+    }
+    for(int i=1; i<=n; i++) cout<<D[key[i]]<<' ';
+
+
+    return 0;
+}
