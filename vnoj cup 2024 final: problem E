@@ -1,0 +1,141 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define st first
+#define nd second
+const int mod=1e9+7;
+
+int n,d,root,l,cnt,ans,t;
+ii A[3000],B[3000];
+vector<ii> ds1;
+vector<ii> ds2;
+vector<ii> ds3;
+vector<ii> ds4;
+int lt(int a,int b){
+    if(b==0) return 1;
+    int p=lt(a,b/2);
+    p=p*p%mod;
+    if(b&1) p=p*a%mod;
+    return p;
+}
+ii td(ii a){
+    return {a.st-A[root].st,a.nd-A[root].nd};
+}
+bool cmp(ii a,ii b){
+    ii u=td(a);
+    ii v=td(b);
+    //cout<<(double) (1.0*v.nd/v.st)<<'\n';
+    if(u.st==0 || u.nd==0) return true;
+    if(v.st==0 || v.nd==0) return false;
+    if(u.st<0){
+        u.nd*=-1;
+        u.st*=-1;
+    }
+    if(v.st<0){
+        v.nd*=-1;
+        v.st*=-1;
+    }
+    if(u.nd*v.st!=u.st*v.nd) return u.nd*v.st>u.st*v.nd;
+    else { return u.st<v.st;}
+}
+bool cmp2(ii a,ii b){
+    ii u=td(a);
+    ii v=td(b);
+    //cout<<(double) (1.0*v.nd/v.st)<<'\n';
+    if(u.st==0 || u.nd==0) return true;
+    if(v.st==0 || v.nd==0) return false;
+    if(u.st<0){
+        u.nd*=-1;
+        u.st*=-1;
+    }
+    if(v.st<0){
+        v.nd*=-1;
+        v.st*=-1;
+    }
+    if(u.nd*v.st!=u.st*v.nd) return u.nd*v.st>u.st*v.nd;
+    else { return u.st<v.st;}
+}
+int ccw(ii a,ii b, ii c){
+    ii A={b.st-a.st,b.nd-a.nd};
+    ii B={c.st-b.st,c.nd-b.nd};
+    return A.st*B.nd-A.nd*B.st;
+}
+void xuly(){
+    swap(B[1],B[root]);
+    ds1.clear();
+    ds2.clear();
+    ds3.clear();
+    ds4.clear();
+    for(int i=2; i<=n; i++){
+        int u=B[i].st-B[1].st;
+        int v=B[i].nd-B[1].nd;
+       // cout<<u<<' '<<v<<'\n';
+        if(v>0 && u>=0){
+            ds1.push_back(B[i]);
+        }
+        if(v<=0 && u>0){
+            ds2.push_back(B[i]);
+        }
+        if(v<0 && u<=0){
+            ds3.push_back(B[i]);
+        }
+        if(v>=0 && u<0){
+            ds4.push_back(B[i]);
+        }
+    }
+    if(ds1.size()) sort(ds1.begin(),ds1.end(),cmp);
+    if(ds2.size()) sort(ds2.begin(),ds2.end(),cmp);
+    if(ds3.size()) sort(ds3.begin(),ds3.end(),cmp2);
+    if(ds4.size()) sort(ds4.begin(),ds4.end(),cmp2);
+    for(ii v: ds2) ds1.push_back(v);
+    for(ii v: ds4) ds3.push_back(v);
+    swap(ds3,ds2);
+   // for(ii v: ds1) cout<<v.st<<' '<<v.nd<<'\n';
+   // for(ii v: ds2) cout<<v.st<<' '<<v.nd<<'\n';
+    l=0;
+    for(int i=0; i<ds1.size(); i++){
+        ii x=ds1[i];
+        while(l<ds2.size() && ccw(B[1],x,ds2[l])<=0){
+            l++;
+        }
+        cnt=ds1.size()-i-1+l;
+     //   cout<<cnt<<'\n';
+        ans=(ans+(lt(2,cnt)-1+mod)%mod * ((A[root].st-x.st+mod)%mod)%mod* ((A[root].nd+x.nd)%mod)%mod +mod)%mod;
+    }
+    l=0;
+    for(int i=0; i<ds2.size(); i++){
+        ii x=ds2[i];
+        while(l<ds1.size() && ccw(B[1],x,ds1[l])<=0){
+            l++;
+        }
+        cnt=ds2.size()-i-1+l;
+      //  cout<<cnt<<'\n';
+        ans=(ans+(lt(2,cnt)-1+mod)%mod * ((A[root].st-x.st+mod)%mod)%mod*((A[root].nd+x.nd)%mod)%mod +mod)%mod;
+    }
+ //   cout<<root<<"-----"<<' '<<ans<<'\n';
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+//cout<<(double) (2/3);
+cin>>t;
+while(t--){
+    cin>>n;
+    for(int i=1; i<=n; i++){
+        cin>>A[i].st>>A[i].nd;
+    }
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++){
+            B[j]=A[j];
+        }
+        root=i;
+        xuly();
+    }
+    cout<<(ans-ans*2%mod+mod*10)%mod<<'\n';
+    ans=0;
+}
+
+
+
+    return 0;
+}
