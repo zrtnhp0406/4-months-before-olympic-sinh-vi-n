@@ -1,0 +1,109 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=1e5+10;
+int D[N*4][30],lazy[N*4][30];
+int n,q,u,v,c,sl,cur;
+string s;
+void build(int id,int l,int r){
+    for(int i=0; i<26; i++){
+        lazy[id][i]=-1;
+    }
+    if(l==r){
+        D[id][s[l-1]-'a']=1;
+        return;
+    }
+    int mid=(l+r)/2;
+    build(id*2,l,mid);
+    build(id*2+1,mid+1,r);
+    for(int i=0; i<26; i++){
+        D[id][i]=D[id*2][i]+D[id*2+1][i];
+    }
+}
+void down(int id,int pos,int l,int r){
+    int t=lazy[id][pos];
+    if(t==-1) return;
+    int mid=(l+r)/2;
+    D[id*2][pos]=t*(mid-l+1);
+    lazy[id*2][pos]=t;
+
+    D[id*2+1][pos]=t*(r-mid);
+    lazy[id*2+1][pos]=t;
+
+    lazy[id][pos]=-1;
+}
+void update(int id,int l,int r,int u,int v,int pos,int val){
+    if(v<u) return;
+    if(r<u || l>v) return;
+    if(u<=l && r<=v){
+        D[id][pos]=val*(r-l+1);
+        lazy[id][pos]=val;
+        return;
+    }
+    down(id,pos,l,r);
+    int mid=(l+r)/2;
+    update(id*2,l,mid,u,v,pos,val);
+    update(id*2+1,mid+1,r,u,v,pos,val);
+    D[id][pos]=D[id*2][pos]+D[id*2+1][pos];
+    lazy[id][pos]=-1;
+}
+int get(int id,int l,int r,int u,int v,int pos){
+    if(r<u ||l >v) return 0;
+
+    if(u<=l && r<=v){
+        return D[id][pos];
+    }
+    down(id,pos,l,r);
+    int mid=(l+r)/2;
+    return get(id*2,l,mid,u,v,pos)+get(id*2+1,mid+1,r,u,v,pos);
+}
+void findans(int id,int l,int r){
+    if(l==r){
+        for(int i=0; i<26; i++){
+            if(D[id][i]) cout<<char(i+'a');
+        }
+        return;
+    }
+    for(int i=0; i<26; i++){
+        down(id,i,l,r);
+    }
+    int mid=(l+r)/2;
+    findans(id*2,l,mid);
+    findans(id*2+1,mid+1,r);
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>q;
+    cin>>s;
+    build(1,1,n);
+    while(q--){
+        cin>>u>>v>>c;
+        if(c){
+            sl=0;
+            cur=0;
+            for(int i=0; i<26; i++){
+                sl=get(1,1,n,u,v,i);
+                update(1,1,n,u,v,i,0);
+                update(1,1,n,u+cur,u+sl+cur-1,i,1);
+                cur+=sl;
+            }
+        }
+        else{
+            sl=0;
+            cur=0;
+            for(int i=25; i>=0; i--){
+                sl=get(1,1,n,u,v,i);
+                update(1,1,n,u,v,i,0);
+                update(1,1,n,u+cur,u+sl+cur-1,i,1);
+                cur+=sl;
+            }
+        }
+    }
+
+    findans(1,1,n);
+
+
+
+
+
+    return 0;
+}
