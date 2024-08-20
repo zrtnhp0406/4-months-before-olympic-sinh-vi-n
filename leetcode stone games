@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int F[101][101];
+        vector<int> suf;
+    int dp(int a,int b){
+        if(a+b*2>=suf.size()) return suf[a];
+        if(F[a][b]>0) return F[a][b];
+        int mixi=1e9;
+        for(int i=1; i<=b*2; i++){
+            mixi=min(mixi,dp(a+i,max(i,b)));
+        }
+        F[a][b]=suf[a]-mixi;
+        return F[a][b];
+    }
+    int stoneGameII(vector<int>& piles) {
+        suf=piles;
+        for(int i=suf.size()-2; i>=0; i--) suf[i]+=suf[i+1];
+        return dp(0,1);
+    }
+};
