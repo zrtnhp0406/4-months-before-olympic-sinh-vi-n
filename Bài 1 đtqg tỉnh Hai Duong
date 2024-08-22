@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int N=1e6+10;
+
+
+int n,dp[N],A[N],B[N],L,l,t;
+multiset<int> ds;
+deque<int> pq;
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    freopen("BOOKS.inp","r",stdin);
+    freopen("BOOKS.out","w",stdout);
+    cin>>t;
+    while(t--){
+    cin>>n>>L;
+    for(int i=1; i<=n; i++){
+        cin>>A[i]>>B[i];
+        B[i]+=B[i-1];
+    }
+    l=0;
+    for(int i=1; i<=n; i++){
+        while(B[i]-B[l]>L){
+            l++;
+        }
+        while(!pq.empty() && pq.front()<=l){
+            if(pq.size()>=2){
+                ds.erase(ds.find(A[pq[1]]+dp[pq.front()]));
+            }
+            pq.pop_front();
+        }
+        while(!pq.empty() && A[pq.back()]<=A[i]){
+            if(pq.size()>=2){
+                ds.erase(ds.find(A[pq.back()]+dp[ pq[pq.size()-2] ]));
+            }
+            pq.pop_back();
+        }
+        if(!pq.empty()){
+           ds.insert(dp[pq.back()]+A[i]);
+        }
+        pq.push_back(i);
+        dp[i]=A[pq.front()]+dp[l];
+        if(!ds.empty()) dp[i]=min(dp[i],*ds.begin());
+    }
+    cout<<dp[n]<<'\n';
+    for(int i=1; i<=n; i++) dp[i]=0;
+    while(!pq.empty()) pq.pop_front();
+    ds.clear();
+    }
+
+    return 0;
+}
+
+
+
+
