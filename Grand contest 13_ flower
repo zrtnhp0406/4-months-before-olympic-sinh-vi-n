@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define iii pair<int,pair<int,int>>
+#define st first
+#define nd second
+const int N=21;
+const int M=1e5+10;
+
+int A[N][M],nxt[N][M],pre[N][M],ma,n,m,sz,x,y,val,k;
+long long ans;
+bool vs[N][M];
+iii B[M];
+int find_pre(int a,int b){
+    return(vs[a][b]?pre[a][b]=find_pre(a,pre[a][b]):b);
+}
+int find_next(int a,int b){
+    return (vs[a][b]?nxt[a][b]=find_next(a,nxt[a][b]):b);
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>m;
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=m; j++){
+            cin>>A[i][j];
+            B[++sz]={A[i][j],{i,j}};
+            pre[i][j]=j-1;
+            nxt[i][j]=j+1;
+        }
+    }
+    sort(B+1,B+sz+1);
+    for(int query=1; query<=sz; query++){
+        val=B[query].st;
+        x=B[query].nd.st;
+        y=B[query].nd.nd;
+        vs[x][y]=true;
+        ma=0;
+        for(int i=x; i>=1; i--){
+            k=find_pre(i,y);
+            if(!k) continue;
+            if(k>ma){
+                ans++;
+                ma=k;
+            }
+        }
+        ma=m+1;
+        for(int i=x; i<=n; i++){
+            k=find_next(i,y);
+            if(k==m+1) continue;
+            if(k<ma){
+                ans++;
+                ma=k;
+            }
+        }
+    }
+    cout<<ans+n*m;
+}
