@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma, ans;
+int A[N];
+
+
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    t=1;
+    while(t--){
+        cin>>n;
+        for(int i=1; i<=n; i++) cin>>A[i];
+        while(1){
+            sort(A+1,A+n+1,greater<int>());
+            if(A[2]<=0) break;
+            ans++;
+            A[1]--;
+            A[2]--;
+        }
+        cout<<ans;
+    }
+
+
+    return 0;
+}
+
