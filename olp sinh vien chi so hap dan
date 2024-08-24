@@ -1,0 +1,121 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define iiii pair <pair<int,int>,pair<int,int>>
+#define st first
+#define nd second
+const int N=1e5+10;
+const int block=270;
+int n,q,l,r,p,suf[N],D[N];
+long long pw[N],F[2][N],ans[N],cnt;
+string s;
+iiii Q[N];
+unordered_map<int,int> nen;
+void update(int b,int a,int val){
+    for(; a<=n; a+=a&(-a)) F[b][a]+=val;
+}
+long long get(int b,int a){
+    long long d=0;
+    for(; a>=1; a-=a&(-a)) d+=F[b][a];
+    return d;
+}
+bool cmp(iiii a,iiii b){
+    return a.nd.nd<b.nd.nd;
+}
+inline int64_t hilbertOrder(int x, int y, int pow, int rotate) {
+    if (pow == 0) {
+        return 0;
+    }
+    int hpow = 1 << (pow-1);
+    int seg = (x < hpow) ? (
+        (y < hpow) ? 0 : 3
+    ) : (
+        (y < hpow) ? 1 : 2
+    );
+    seg = (seg + rotate) & 3;
+    const int rotateDelta[4] = {3, 0, 0, 1};
+    int nx = x & (x ^ hpow), ny = y & (y ^ hpow);
+    int nrot = (rotate + rotateDelta[seg]) & 3;
+    int64_t subSquareSize = int64_t(1) << (2*pow - 2);
+    int64_t ans = seg+subSquareSize;
+    int64_t add = hilbertOrder(nx, ny, pow-1, nrot);
+    ans += (seg == 1 || seg == 2) ? add : (subSquareSize - add - 1);
+    return ans;
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+    cin>>p;
+    cin>>s;
+    n=s.size();
+    cin>>q;
+    if(p==2 || p==5){
+        for(int i=1; i<=n; i++){
+            if((s[i-1]-'0')%p==0){
+                update(0,i,i);
+                update(1,i,1);
+            }
+        }
+        while(q--){
+            cin>>l>>r;
+            cout<<get(0,r)-get(0,l-1)-(get(1,r)-get(1,l-1))*(l-1)<<'\n';
+        }
+    }
+    else{
+        for(int i=1; i<=q; i++){
+            cin>>Q[i].st.st>>Q[i].st.nd;
+            Q[i].nd.st=i;
+            Q[i].nd.nd=(Q[i].st.st,Q[i].st.nd,19,0);
+        }
+
+        sort(Q+1,Q+q+1,cmp);
+        pw[0]=1;
+        for(int i=1; i<=n; i++) pw[i]=pw[i-1]*10%p;
+        for(int i=n; i>=1; i--){
+            suf[i]=(suf[i+1]+(s[i-1]-'0')*pw[n-i])%p;
+        }
+        for(int i=1; i<=n; i++){
+            nen[suf[i]]=1;
+        }
+        for(auto v: nen){
+            nen[v.st]=++cnt;
+        }
+        for(int i=1; i<=n; i++){
+            suf[i]=nen[suf[i]];
+        }
+        l=1;
+        r=0;
+        cnt=0;
+        for(int i=1; i<=q; i++){
+            while(r<Q[i].st.nd){
+                r++;
+                cnt+=D[suf[r]];
+                D[suf[r]]++;
+            }
+            while(r>Q[i].st.nd){
+                D[suf[r]]--;
+                cnt-=D[suf[r]];
+                r--;
+            }
+            while(l>Q[i].st.st){
+                l--;
+                cnt+=D[suf[l]];
+                D[suf[l]]++;
+            }
+            while(l<Q[i].st.st){
+                D[suf[l]]--;
+                cnt-=D[suf[l]];
+                l++;
+            }
+            if(r==n) ans[Q[i].nd]=cnt+D[nen[0]];
+            else ans[Q[i].nd]=cnt+D[suf[r+1]];
+        }
+        for(int i=1; i<=q; i++) cout<<ans[i]<<'\n';
+    }
+
+
+
+
+
+
+    return 0;
+}
