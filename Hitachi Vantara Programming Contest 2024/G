@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma, cnt, q,l ,r, type,pre, v;
+int A[N],D[N*4],B[N];
+set<int> ds;
+void build(int id,int l,int r){
+    if(l==r){
+        D[id]=A[l];
+        return;
+    }
+    int mid=(l+r)/2;
+    build(id*2,l,mid);
+    build(id*2+1,mid+1,r);
+    D[id]=D[id*2]+D[id*2+1];
+}
+void update(int id,int l,int r,int pos,int val){
+    if(r<pos || l>pos) return;
+    if(l==r){
+        D[id]=val;
+        return;
+    }
+    int mid=(l+r)/2;
+    update(id*2,l,mid,pos,val);
+    update(id*2+1,mid+1,r,pos,val);
+    D[id]=D[id*2]+D[id*2+1];
+}
+int get(int id,int l,int r,int u,int v){
+    if(v<u) return 0;
+    if(r<u || l>v) return 0;
+    if(u<=l && r<=v) return D[id];
+    int mid=(l+r)/2;
+    return get(id*2,l,mid,u,v)+get(id*2+1,mid+1,r,u,v);
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n;
+    ds.insert(n+1);
+    for(int i=1; i<=n; i++){
+        cin>>A[i];
+    }
+    build(1,1,n);
+    for(int i=1; i<=n; i++){
+        cin>>B[i];
+        if(B[i]!=1){
+            ds.insert(i);
+        }
+    }
+    cin>>q;
+    while(q--){
+        cin>>type;
+        if(type==1){
+            cin>>l>>r;
+            update(1,1,n,l,r);
+            A[l]=r;
+        }
+        else if(type==2){
+            cin>>l>>r;
+            if(B[l]!=1){
+                if(r==1){
+                    ds.erase(l);
+                }
+            }
+            else{
+                if(r!=1){
+                    ds.insert(l);
+                }
+            }
+            B[l]=r;
+        }
+        else{
+            cin>>l>>r;
+            auto F=ds.lower_bound(l);
+            pre=l;
+            v=0;
+            while(*F<=r){
+                v+=get(1,1,n,pre,*F-1);
+                v=max(v+A[*F],v*B[*F]);
+                pre=*F+1;
+                F++;
+            }
+            v+=get(1,1,n,pre,r);
+            cout<<v<<'\n';
+        }
+    }
+    return 0;
+}
+
+
