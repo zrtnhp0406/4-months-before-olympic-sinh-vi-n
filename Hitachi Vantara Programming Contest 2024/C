@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma;
+int A[N], ans, pos;
+
+
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    t=1;
+    while(t--){
+        cin>>n;
+        for(int i=1; i<=n; i++) cin>>A[i];
+        pos=1;
+        for(int i=1; i<=n; i++){
+
+            while(A[i]>0 && pos%3!=0){
+                A[i]--;
+                ans++;
+                pos=(pos+1)%3;
+            }
+            if(A[i]>0){
+                ans++;
+                A[i]-=3;
+                pos++;
+            }
+            ans+=A[i]/5 *3;
+            A[i]%=5;
+            while(A[i]>0){
+                if(pos%3==0) A[i]-=3;
+                else A[i]--;
+
+                ans++;
+                pos=(pos+1)%3;
+            }
+        }
+
+        cout<<ans;
+    }
+
+
+    return 0;
+}
+
