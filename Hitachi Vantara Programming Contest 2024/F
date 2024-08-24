@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma,cnt;
+int A[N],grundy[N],D[N];
+vector<int> ds[N];
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    t=1;
+    grundy[0]=0;
+    grundy[1]=0;
+    for(int i=1; i<=100000; i++){
+        for(int j=i*2; j<=100000; j+=i){
+            ds[j].push_back(i);
+        }
+    }
+    for(int i=2; i<=100000; i++){
+        for(int v: ds[i]) D[grundy[v]]=1;
+        cnt=0;
+        while(D[cnt]) cnt++;
+        for(int v: ds[i]) D[grundy[v]]=0;
+        grundy[i]=cnt;
+    }
+    cin>>n;
+    cnt=0;
+    for(int i=1; i<=n; i++){
+        cin>>A[i];
+        cnt^=grundy[A[i]];
+    }
+    if(cnt==0){
+        cout<<"Bruno"<<'\n';
+    }
+    else cout<<"Anna"<<'\n';
+    return 0;
+}
+
