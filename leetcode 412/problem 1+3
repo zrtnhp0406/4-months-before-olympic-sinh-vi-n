@@ -1,0 +1,64 @@
+class Solution {
+public:
+    #define ii pair<long long,long long>
+    #define st first
+    #define nd second
+    multiset<ii> ds;
+    long long mod=1e9+7;
+    long long bonus=0;
+    int vs[100000];
+    long long lt(long long a,long long b){
+        if(b==0) return 1;
+        long long p=lt(a,b/2);
+        p=p*p%mod;
+        if(b%2==1) p=p*a%mod;
+        return p;
+    }
+    vector<int> getFinalState(vector<int>& nums, int k, int multiplier) {
+        int n=nums.size();
+        if(multiplier==1){
+            return nums;
+        }
+        for(int i=0; i<nums.size(); i++){
+            ds.insert({nums[i],i});
+        }
+        int OK=n;
+        while(1){
+            auto v=*(--ds.end());
+            auto u=*ds.begin();
+            if(v.st/u.st>multiplier){
+                k--;
+                ds.erase(ds.find(u));
+                ds.insert({u.st*multiplier,u.nd});
+            }
+            else if(v.st%u.st==0 && v.st/u.st==multiplier && OK){
+                    ds.erase(ds.find(u));
+                    ds.insert({u.st*multiplier,u.nd});
+                    OK--;
+                    k--;
+            }
+            else break;
+            if(!k) break;
+        }
+        if(!k){ 
+            
+        for(auto v: ds) nums[v.nd]=v.st%mod;
+        }
+        else{
+            bonus=k/n;
+            k%=n;
+            for(auto v: ds){
+                if(k){
+                    ds.erase(ds.find(v));
+                    ds.insert({v.st*multiplier,v.nd});
+                    k--;
+                }
+                else break;
+            }
+            for(auto v: ds){
+                nums[v.nd]=v.st%mod *lt(multiplier,bonus)%mod;
+            }
+        }
+        return nums;
+    }
+};
