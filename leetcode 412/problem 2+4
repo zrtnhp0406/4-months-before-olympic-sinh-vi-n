@@ -1,0 +1,34 @@
+class Solution {
+public:
+    int ans;
+    string s;
+    unordered_set<int> ds;
+    int D[10000005];
+    void change(int a,int b){
+        if(b==2) return;
+        string s=to_string(a);
+        for(int i=0; i<s.size(); i++){
+            for(int j=i+1; j<s.size(); j++){
+                if(s[i]!=s[j]){
+                    swap(s[i],s[j]);
+                    ds.insert(stoll(s));
+                    int so=0;
+                    for(int k=0; k<s.size(); k++) so=so*10+(s[k]-'0');
+                    change(so,b+1);
+                    swap(s[i],s[j]);
+                }
+            }
+        }
+    }
+    int countPairs(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        for(int i=0; i<nums.size(); i++){
+            ds.clear();
+            ds.insert(nums[i]);
+            change(nums[i],0);
+            for(int v: ds) ans+=D[v];
+            D[nums[i]]++;
+        }
+        return ans;
+    }
+};
