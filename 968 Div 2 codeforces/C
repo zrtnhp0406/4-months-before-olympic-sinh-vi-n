@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma;
+int A[N], l, r, mid;
+string s,ans;
+char pre,p;
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>t;
+    while(t--){
+        cin>>n;
+        cin>>s;
+        for(char v: s) A[v]++;
+        ans.clear();
+        pre='0';
+        for(int i=1; i<=n; i++){
+            p='0';
+            for(int j='a'; j<='z'; j++){
+                if(A[p]<A[j] && j!=pre)
+                    p=j;
+            }
+            if(p=='0') p=pre;
+            ans+=p;
+            A[p]--;
+            pre=p;
+        }
+        cout<<ans<<'\n';
+        for(int i='a'; i<='z'; i++) A[i]=0;
+    }
+
+
+    return 0;
+}
+ 
