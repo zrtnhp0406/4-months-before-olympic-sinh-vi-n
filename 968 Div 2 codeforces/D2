@@ -1,0 +1,85 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma, l, A[N],F[N], ma2, x, y, D[N];
+int ans;
+char pre,p;
+vector<int> ds[N],ds2;
+bool vs[N];
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>t;
+    while(t--){
+        cin>>n>>m;
+        x=0;
+        for(int i=1; i<=n; i++){
+            cin>>l;
+            for(int j=1; j<=l; j++) cin>>A[j];
+            sort(A+1,A+l+1);
+            ma=0;
+            for(int j=1; j<=l; j++){
+                if(A[j]==ma) ma++;
+            }
+            A[++l]=ma;
+            D[ma]++;
+            sort(A+1,A+l+1);
+            ma2=0;
+            for(int j=1; j<=l; j++){
+                if(A[j]==ma2) ma2++;
+            }
+            ds[ma].push_back(ma2);
+            ds2.push_back(ma);
+            x=max(x,ma2);
+        }
+     //   cout<<m<<' '<<x<<'\n';
+        if(m>x){
+            ans=(m-x)*(m+x+1)/2;
+            m=x;
+        }
+        else ans=0;
+        y=0;
+        for(int i=x+1; i>=0; i--){
+            F[i]=max(y,i);
+            if(D[i]>0) y=max(y,i);
+            if(D[i]>1){
+                for(int v: ds[i]) y=max(y,F[v]);
+            }
+            for(int v: ds[i]) F[i]=max(F[i],F[v]);
+        }
+        for(int i=x+1; i>=0; i--){
+            F[i]=0;
+        }
+        for(int i=x; i>=0; i--){
+            F[i]=max(y,i);
+            for(int v: ds[i]){
+                F[i]=max(F[v],F[i]);
+            }
+            if(i==m){
+                ans+=F[i];
+                m--;
+            }
+        }
+        cout<<ans<<'\n';
+        for(int i=0; i<=x+1; i++) F[i]=0;
+        for(int i=0; i<=x+1; i++) {D[i]=0; ds[i].clear();}
+        ans=0;
+        ma=0;
+        ma2=0;
+        x=0;
+        y=0;
+        ds2.clear();
+    }
+
+
+
+    return 0;
+}
+ 
