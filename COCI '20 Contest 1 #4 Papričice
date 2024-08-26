@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N=2e5+10;
+
+int n,sub[N],u,v,ans,k;
+vector<int> ds[N];
+multiset<int> A,B;
+void build(int a,int p){
+    for(int v: ds[a]){
+        if(v==p) continue;
+        build(v,a);
+        sub[a]+=sub[v];
+    }
+    sub[a]++;
+}
+void DFS(int a,int p){
+    auto F=A.lower_bound((n+sub[a])/2);
+    if(F!=A.end()) ans=min(ans,max({n-*F,*F-sub[a],sub[a]})-min({n-*F,*F-sub[a],sub[a]}));
+    if(F!=A.begin()){
+        F--;
+        ans=min(ans,max({n-*F,*F-sub[a],sub[a]})-min({n-*F,*F-sub[a],sub[a]}));
+    }
+
+    F=B.lower_bound((n-sub[a])/2);
+    if(F!=B.end()) ans=min(ans,max({*F,sub[a],n-*F-sub[a]})-min({*F,sub[a],n-*F-sub[a]}));
+    if(F!=B.begin()){
+        F--;
+        ans=min(ans,max({*F,sub[a],n-*F-sub[a]})-min({*F,sub[a],n-*F-sub[a]}));
+    }
+    for(int v: ds[a]){
+        if(v==p) continue;
+        A.insert(sub[v]);
+        DFS(v,a);
+        A.erase(A.find(sub[v]));
+        B.insert(sub[v]);
+    }
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n;
+    for(int i=1; i<n; i++){
+        cin>>u>>v;
+        ds[u].push_back(v);
+        ds[v].push_back(u);
+    }
+    build(1,1);
+    ans=1e9;
+    A.insert(sub[1]);
+    DFS(1,1);
+    cout<<ans;
+
+    return 0;
+}
