@@ -1,0 +1,53 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n,c,l,r,mid,pos;
+string s,ans;
+int ask(string a){
+    cout<<"? "<<a<<endl;
+    int b;
+    cin>>b;
+    return b;
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n;
+    for(int i=1; i<=n; i++){
+        s+='0';
+    }
+    c=ask(s);
+    if(!c){
+        for(int i=1; i<=n; i++){
+            s[i-1]='1';
+        }
+    }
+    l=0;
+    r=n-1;
+    while(l<=r){
+        mid=(l+r)/2;
+        for(int i=0; i<=mid; i++){
+            s[i]=1-(s[i]-'0')+'0';
+        }
+        c=ask(s);
+        for(int i=0; i<=mid; i++){
+            s[i]=1-(s[i]-'0')+'0';
+        }
+        if(!c){
+            pos=mid;
+            r=mid-1;
+        }
+        else l=mid+1;
+    }
+    for(int i=0; i<=pos; i++){
+        s[i]=1-(s[i]-'0')+'0';
+    }
+    for(int i=0; i<n; i++){
+        s[i]=1-(s[i]-'0')+'0';
+        c=ask(s);
+        if(!c) ans+=s[i];
+        else ans+=1-(s[i]-'0')+'0';
+        s[i]=1-(s[i]-'0')+'0';
+    }
+    cout<<"! "<<ans<<endl;
+    return 0;
+}
