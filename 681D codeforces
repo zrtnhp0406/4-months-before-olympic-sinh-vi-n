@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+
+
+long  vs[100007],n,m,x,y,D[100008],B[100007];
+vector<long> ds[100007];
+vector<long> ans;
+vector<long> z;
+vector<long> bo;
+bool ck[100007];
+void DFS(long a){
+	for(long v: ds[a]){
+		DFS(v);
+	}
+	for(long v:ds[a]) ans.push_back(v);
+}
+void DFS1(long a,long b){
+	vs[a]=b;
+	for(long v: ds[a]){
+		if(!vs[v]){
+			//vs[v]=b;
+			DFS1(v,b);
+		}
+	}
+}
+int main(){
+	ios::sync_with_stdio(0);cin.tie(0);
+	cin>>n>>m;
+	for(long i=1; i<=n; i++) B[i]=i;
+	for(long i=1; i<=m; i++){
+		cin>>x>>y;
+		B[y]=x;
+		ds[x].push_back(y);
+	}
+	for(long i=1; i<=n; i++){
+		if(B[i]==i) bo.push_back(i);
+	}
+	for(long i=1; i<=n; i++){
+		cin>>D[i];
+		ck[D[i]]=true;
+	}
+	for(long i: bo){
+			DFS(i);
+			ans.push_back(i);
+	}
+	for(long i: ans){
+		if(ck[i]) DFS1(i,i);
+	}
+	for(long i=1; i<=n; i++){
+		if(D[i]!=vs[i]){
+			cout<<-1;
+			return 0;
+		}
+	}
+	//for(long i=1; i<=n; i++) ck[D[i]]=true;
+	for(long i=0; i<ans.size(); i++) if(ck[ans[i]]) z.push_back(ans[i]);
+	cout<<z.size()<<'\n';
+	for(long i: z) cout<<i<<'\n';
+
+	return 0;
+}
