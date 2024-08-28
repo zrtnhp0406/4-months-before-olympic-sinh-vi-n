@@ -1,0 +1,88 @@
+class Solution {
+public:
+    const int N=501,M=501;
+    int D[500000], D2[500000],ans;
+    int Dx[4]={0,0,-1,1};
+    int Dy[4]={-1,1,0,0};
+    vector<int> ds[500000];
+    int n,m;
+    int get(int a,int b){
+        return a*m+b;
+    }
+    bool check(int a,int b){
+        return 0<=a && a<n && 0<=b && b<m;
+    }
+    int dd(int a){
+        return D[a]!=a?D[a]=dd(D[a]):a;
+    }
+    void dsu(int a,int b){
+        a=dd(a);
+        b=dd(b);
+        if(a==b) return;
+        D[a]=b;
+    }
+    
+    int dd2(int a){
+        return D2[a]!=a?D2[a]=dd2(D2[a]):a;
+    }
+    
+    void dsu2(int a,int b){
+        a=dd2(a);
+        b=dd2(b);
+        if(a==b) return;
+        if(ds[a].size()>ds[b].size()) swap(a,b);
+        for(int v: ds[a]){
+            ds[b].push_back(v);
+            D2[v]=b;
+        }
+        ds[a].clear();
+    }
+    int countSubIslands(vector<vector<int>>& grid1, vector<vector<int>>& grid2) {
+        n=grid1.size();
+        m=grid1[0].size();
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                D[get(i,j)]=get(i,j);
+                D2[get(i,j)]=get(i,j);
+                ds[get(i,j)].push_back(get(i,j));
+            }
+        }
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(!grid1[i][j]) continue;
+                for(int k=0; k<4; k++){
+                    int x=i+Dx[k];
+                    int y=j+Dy[k];
+                    if(check(x,y) && grid1[x][y]==1) dsu(get(i,j),get(x,y));
+                }
+            }
+        }
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(!grid2[i][j]) continue;
+                for(int k=0; k<4; k++){
+                    int x=i+Dx[k];
+                    int y=j+Dy[k];
+                    if(check(x,y) && grid2[x][y]==1) dsu2(get(i,j),get(x,y));
+                }
+            }
+        }
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(ds[get(i,j)].size() && grid2[i][j]==1 && grid1[i][j]==1){
+                    bool OK=true;
+                 //   cout<<dd2(get(i,j))<<' ';
+                    int cur=dd(get(i,j));
+                    for(int v: ds[get(i,j)]){
+                        if(dd(v)!=cur){
+                            OK=false;
+                        }
+                    }
+                    ans+=OK;
+                }
+            }
+        }
+        return ans;
+    }
+};
