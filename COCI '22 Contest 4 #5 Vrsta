@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int N=2e5+10;
+#define ii pair<int,int>
+#define st first
+#define nd second
+int de[N],cnt,n,D[N*4],sz;
+map<int,int> key;
+ii Q[N];
+void update(int id,int l,int r,int u,int val){
+    if(r<u || l>u) return;
+    if(l==r){
+        D[id]+=val;
+        return;
+    }
+    int mid=(l+r)/2;
+    update(id*2,l,mid,u,val);
+    update(id*2+1,mid+1,r,u,val);
+    D[id]=D[id*2]+D[id*2+1];
+}
+int get(int id,int l,int r,int val){
+   // cout<<val<<' ';
+    if(l==r){
+        return l;
+    }
+    int mid=(l+r)/2;
+    if(D[id*2]>=val){
+       return get(id*2,l,mid,val);
+
+    }
+    else{
+       return get(id*2+1,mid+1,r,val-D[id*2]);
+    }
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n;
+    for(int i=1; i<=n; i++){
+        cin>>Q[i].st>>Q[i].nd;
+        key[Q[i].st]=1;
+    }
+    for(auto v: key){
+        key[v.st]=++cnt;
+        de[cnt]=v.st;
+    }
+    for(int i=1; i<=n; i++){
+        update(1,1,cnt,key[Q[i].st],Q[i].nd);
+        sz+=Q[i].nd;
+        cout<<de[get(1,1,cnt,(sz+1)/2)]<<'\n';
+    }
+
+
+
+
+    return 0;
+}
+
