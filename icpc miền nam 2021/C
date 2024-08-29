@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// binkv2005 - Hoang Duc Dung
+
+using ll = long long;
+#define endl '\n'
+typedef pair<ll, ll> ii;
+const ll MOD = 1e9 + 7;
+const ll N = 1e5 + 10;
+const ll oo = 1e18;
+
+string s;
+int n;
+
+void FRE() {
+    // freopen("test.inp", "r", stdin);
+    // freopen("test.out", "w", stdout);
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+}
+
+int main() {
+    FRE();
+    
+    cin >> s;
+    cin >> n;
+
+    int cha = 10000, cha2 = 10000;
+
+    for(int i = 0; i < s.size(); i++){
+        cha = min(cha , int(s[i]));
+    }
+
+    for(int i = 0 ; i < s.size(); i++){
+        if(int(s[i]) == cha){
+            if(i < s.size() - 1){
+                cha2 = min(cha2, int(s[i + 1]));
+            }
+            if(i >= 1){
+                cha2 = min(cha2, int(s[i - 1]));
+            }
+        }
+    }
+
+    for(int i = 1; i <= n; i++){
+        if(i % 2 != 0) cout << char(cha);
+        else cout << char(cha2);
+    }
+
+
+
+    return (cout << '\n', 0);
+}
