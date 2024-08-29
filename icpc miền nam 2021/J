@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=5e3+3;
+int n, m, t, mi, ma,L[N][N],A[N][N], a, b, ans;
+string s[N];
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>m;
+    for(int i=1; i<=n; i++){
+        cin>>s[i];
+        s[i]=' '+s[i];
+    }
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=m; j++){
+            if(s[i][j]=='0') L[i][j]=0;
+            else L[i][j]=L[i][j-1]+1;
+            A[i][j]=L[i][j];
+        }
+        for(int j=m; j>=1; j--){
+            if(s[i][j]=='0') L[i][j]=0;
+            else L[i][j]=L[i][j+1]+1;
+            A[i][j]=min(A[i][j],L[i][j]);
+        }
+    }
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=m; j++){
+            L[i][j]=0;
+        }
+    }
+    for(int i=1; i<=m; i++){
+        for(int j=1; j<=n; j++){
+            if(s[j][i]=='0') L[j][i]=0;
+            else L[j][i]=L[j-1][i]+1;
+            A[j][i]=min(A[j][i],L[j][i]);
+        }
+        for(int j=n; j>=1; j--){
+            if(s[j][i]=='0') L[j][i]=0;
+            else L[j][i]=L[j+1][i]+1;
+            A[j][i]=min(A[j][i],L[j][i]);
+        }
+    }
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=m; j++){
+            if(s[i][j]=='1'){
+                mi=A[i][j];
+                if(mi*4-3>ans){
+                    ans=mi*4-3;
+                    a=i;
+                    b=j;
+                }
+            }
+        }
+    }
+    if(ans==0){
+        cout<<-1<<'\n';
+        return 0;
+    }
+    cout<<ans<<'\n';
+    cout<<a<<' '<<b;
+    return 0;
+}
