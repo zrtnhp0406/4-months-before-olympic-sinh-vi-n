@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, u, v, ma[N],ans[N];
+int A[N];
+vector<ll> Q[N];
+vector<int> ds[N];
+vector<int> T;
+void DFS(int a,int p){
+
+    for(int v: ds[a]){
+        if(v==p) continue;
+        DFS(v,a);
+        ma[a]=max(ma[v],ma[a]);
+    }
+    ma[a]++;
+}
+void reroot(int a,int p,int sz){
+    vector<int> L;
+    vector<int> R;
+    L.push_back(0);
+    R.push_back(0);
+    T.clear();
+    //cout<<a<<'\n';
+    if(a!=1) T.push_back(sz);
+    for(int v: ds[a]){
+        if(v==p) continue;
+        T.push_back(ma[v]);
+    }
+    sort(T.begin(),T.end());
+
+//    cout << "root = " << a << '\n';
+//    cout << "sz: "; for (int x : T) cout << x << ' '; cout << '\n';
+
+    for(ll x: Q[a]){
+        auto F=upper_bound(T.begin(),T.end(),x.st)-T.begin();
+        ans[x.nd]=T.size()-F;
+    }
+    for(int v: ds[a]){
+        if(v==p) {L.push_back(0); R.push_back(0); continue;}
+        L.push_back(ma[v]);
+        R.push_back(ma[v]);
+    }
+
+    for (int i = 1; i < (int) L.size(); i++) L[i] = max(L[i], L[i - 1]);
+    for (int i = (int) R.size() - 2; i >= 0; i--) R[i] = max(R[i], R[i + 1]);
+
+    L.emplace_back(0);
+    R.emplace_back(0);
+    for (int i = 0; i < (int) ds[a].size(); i++) if (ds[a][i] != p) {
+        reroot(ds[a][i],a,max({sz,L[i],R[i+2]})+1);
+    }
+
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>m;
+    for(int i=1; i<n; i++){
+        cin>>u>>v;
+        ds[u].push_back(v);
+        ds[v].push_back(u);
+    }
+    for(int i=1; i<=m; i++){
+        cin>>u>>v;
+        Q[u].push_back({v,i});
+    }
+    DFS(1,1);
+    reroot(1,1,0);
+    for(int i=1; i<=m; i++) cout<<ans[i]<<'\n';
+    return 0;
+}
