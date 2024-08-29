@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll pair<int,int>
+#define lll pair<int,pair<int,int>>
+#define st first
+#define nd second
+const double op=1e-9;
+const int N=5e3+3;
+double l,r,mid,ans,A,H;
+double get(double a,double b, double c){
+    return (H-(c-(b-a)*c/b))*a;
+}
+double get2(double a,double b,double c){
+    return (H-(c-(b-a)*(c-H/6)/(100-A))) *a;
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>A>>H;
+    l=0;
+    r=A;
+    while(r-l>=op){
+        mid=(l+r)/2.0;
+        ans=max(ans,get(mid,A,H/6.0));
+        if(get(mid,A,H/6.0)<get(mid+op,A,H/6.0)){
+            l=mid+op;
+        }
+        else r=mid-op;
+    }
+
+    l=A;
+    r=100;
+    while(r-l>=op){
+        mid=(l+r)/2.0;
+        ans=max(ans,get2(mid,100.0,H/3.0));
+        if(get2(mid,100.0,H/3.0)<get2(mid+op,100.0,H/3.0)){
+            l=mid+op;
+        }
+        else r=mid-op;
+    }
+
+    cout<<fixed<<setprecision(6)<<ans;
+    return 0;
+}
