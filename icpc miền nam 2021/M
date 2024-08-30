@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ii pair<int,int>
+#define st first
+#define nd second
+const int N=1e6+10;
+ii A[N];
+long long ans;
+int n,pos,D[N],l;
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n;
+    for(int i=1; i<=n; i++){
+        cin>>A[i].st;
+        A[i].nd=i;
+    }
+    sort(A+1,A+n+1,greater<ii>());
+    l=1;
+    for(int i=1; i<=n; i++){
+        while(A[l].st!=A[i].st){
+            if(D[pos]<D[l]){
+                pos=l;
+            }
+            else if(D[pos]==D[l] && A[pos].nd<A[l].nd){
+                pos=l;
+            }
+            l++;
+        }
+
+        if(A[pos].nd<A[i].nd){
+            D[i]=D[pos];
+            ans+=D[pos];
+        }
+        else{
+            D[i]=D[pos]+1;
+            ans+=D[pos]+1;
+        }
+    }
+
+    cout<<ans;
+
+
+
+
+    return 0;
+}
