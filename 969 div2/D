@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define iii pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma, k, x, y, ans,d, c[3];
+string s;
+vector<int> ds[N];
+vector<int> leaf;
+void DFS(int a,int p){
+    if(ds[a].size()==1 && a!=1) leaf.push_back(a);
+    else if(a!=1 && s[a-1]=='?'){
+        k^=1;
+    }
+    for(int v: ds[a]){
+        if(v==p) continue;
+        DFS(v,a);
+    }
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>t;
+    while(t--){
+        cin>>n;
+        for(int i=1; i<n; i++){
+            cin>>x>>y;
+            ds[x].push_back(y);
+            ds[y].push_back(x);
+        }
+        cin>>s;
+
+        k=0;
+        DFS(1,1);
+        if(s[0]!='?'){
+          d=1;
+          for(int v: leaf){
+            if(s[v-1]=='?'){
+                ans+=d;
+                d^=1;
+            }
+            else{
+                ans+=(s[v-1]!=s[0]);
+            }
+          }
+        }
+        else{
+            c[0]=c[1]=0;
+            c[2]=0;
+            for(int v: leaf){
+                if(s[v-1]=='0') c[0]++;
+                else if(s[v-1]=='1') c[1]++;
+                else c[2]++;
+            }
+            if(k==0) ans=max(c[0],c[1])+c[2]/2;
+            else{
+                if(c[2]%2==0){
+                    ans=max(c[0],c[1])+c[2]/2;
+                }
+                else{
+                    ans=max( min(c[0],c[1])+(c[2]+1)/2, max(c[0],c[1])+c[2]/2 );
+                }
+            }
+        }
+        cout<<ans<<'\n';
+        leaf.clear();
+        ans=0;
+        for(int i=1; i<=n; i++) ds[i].clear();
+    }
+
+
+    return 0;
+}
+
