@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define iii pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, mi, ma, k, l, r, le, chan;
+int A[N];
+
+
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>t;
+    while(t--){
+        cin>>l>>r;
+        le=0;
+        chan=0;
+        for(int i=l; i<=r; i++) {
+            if(i%2==0) chan++;
+            else le++;
+        }
+        cout<<min(le/2,chan)<<'\n';
+    }
+
+
+    return 0;
+}
