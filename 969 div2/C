@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define iii pair<int,pair<int,int>>
+#define st first
+#define nd second
+
+const int N=1e6+10;
+const int mod=1e9+7;
+
+int n, m, t, a, b, k, l, r, pos;
+int A[N], ans, mi[2][N];
+char type;
+
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>t;
+    while(t--){
+        cin>>n>>a>>b;
+        for(int i=1; i<=n; i++){
+            cin>>A[i];
+        }
+        sort(A+1,A+n+1);
+        a=__gcd(a,b);
+        ans=0;
+        pos=1e9;
+        for(int i=1; i<=n; i++){
+                A[i]=(A[n]-A[i])/a *a +A[i];
+                pos=min(pos,A[i]);
+        }
+        sort(A+1,A+n+1);
+        ans=A[n]-A[1];
+        for(int i=1; i<n; i++){
+            ans=min(ans,A[i]+a-A[i+1]);
+        }
+        cout<<ans<<'\n';
+    }
+
+
+    return 0;
+}
