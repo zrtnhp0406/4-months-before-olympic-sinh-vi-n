@@ -1,0 +1,22 @@
+class Solution {
+public:
+    multiset<int> ds;
+    vector<int> resultsArray(vector<vector<int>>& queries, int k) {
+        vector<int> ans;
+        for(auto v: queries ){
+            int so=abs(v[0])+abs(v[1]);
+            if(!ds.empty() && ds.size()==k && *ds.rbegin()>so){
+                ds.erase((--ds.end()));
+                ds.insert(so);
+            }
+            else if(ds.size()<k){
+                ds.insert(so);
+            }
+            if(ds.size()==k){
+                ans.push_back(*ds.rbegin());
+            }
+            else ans.push_back(-1);
+        }
+        return ans;
+    }
+};
