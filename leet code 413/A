@@ -1,0 +1,11 @@
+class Solution {
+public:
+    bool checkTwoChessboards(string coordinate1, string coordinate2) {
+        int so=(coordinate1[0]-'a'+1)+(coordinate1[1]-'0');
+        int so2=(coordinate2[0]-'a'+1)+(coordinate2[1]-'0');
+        if(so%2==so2%2){
+            return true;
+        }
+        else return false;
+    }
+};
