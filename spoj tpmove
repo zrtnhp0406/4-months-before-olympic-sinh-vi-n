@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define iiii pair<pair<int,int>,pair<int,int>>
+#define ii pair<int,int>
+#define st first
+#define nd second
+const int N=500;
+int n,m,D[N][N][4],st[2],en[2],x,y,x_,y_,x_new,y_new,ans,key[501][501][5];
+bool OK=false;
+int dx[4]={0,0,1,-1};
+int dy[4]={-1,1,0,0};
+priority_queue<iiii,vector<iiii>,greater<iiii>> pq;
+bool check(int a,int b){
+    return 0<a && a<=n && 0<b && b<=m;
+}
+int dist(ii a, ii b, ii c){
+    if(a.st==c.st && b.st==c.st && min(b.nd,a.nd)<c.nd && c.nd<max(a.nd,b.nd)) return abs(a.nd-b.nd)+abs(a.st-b.st)+2;
+    if(a.nd==c.nd && b.nd==c.nd && min(b.st,a.st)<c.st && c.st<max(a.st,b.st)) return abs(a.nd-b.nd)+abs(a.st-b.st)+2;
+    return abs(a.nd-b.nd)+abs(a.st-b.st);
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>m>>x>>y>>st[0]>>st[1]>>en[0]>>en[1];
+    for(int i=1; i<=300; i++){
+        for(int j=1; j<=300; j++){
+            for(int k=0; k<4; k++){
+                D[i][j][k]=1e9;
+            }
+        }
+    }
+    for(int i=0; i<4; i++){
+        x_=st[0]+dx[i];
+        y_=st[1]+dy[i];
+        if(check(x_,y_)){
+            D[st[0]][st[1]][i]=dist(make_pair(x_,y_),make_pair(x,y),make_pair(st[0],st[1]));
+            pq.push({{D[st[0]][st[1]][i],i},{st[0],st[1]}});
+        }
+    }
+    while(!pq.empty()){
+        iiii u=pq.top();
+        pq.pop();
+        if(u.st.st!=D[u.nd.st][u.nd.nd][u.st.nd]) continue;
+        for(int i=0; i<4; i++){
+            x_new=u.nd.st+dx[i];
+            y_new=u.nd.nd+dy[i];
+            if(check(x_new,y_new) && D[x_new][y_new][i+(i%2==1?-1:1)]>u.st.st+dist(make_pair(u.nd.st+dx[u.st.nd],u.nd.nd+dy[u.st.nd]),make_pair(x_new,y_new),u.nd)+1){
+                D[x_new][y_new][i+(i%2==1?-1:1)]=u.st.st+dist(make_pair(u.nd.st+dx[u.st.nd],u.nd.nd+dy[u.st.nd]),make_pair(x_new,y_new),u.nd)+1;
+                pq.push({{D[x_new][y_new][i+(i%2==1?-1:1)],i+(i%2==1?-1:1)},{x_new,y_new}});
+            }
+        }
+    }
+    ans=1e9;
+    for(int i=0; i<4; i++){
+        ans=min(ans,D[en[0]][en[1]][i]);
+}
+    cout<<ans;
+
+    return 0;
+}
