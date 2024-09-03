@@ -1,0 +1,188 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int mod=1e9+7;
+const int N=1e5+1;
+int n,q,type,x,y,k,lazy[N*4],L[N],D[2][2][N*4][26],temp[30];
+long long K[2][N][26];
+long long T[2][N],p[2][2];
+long long base[2]={31,73};
+
+string s;
+long long lt(int a,int b){
+    if(b==0) return 1;
+    long long p=lt(a,b/2);
+    p=p*p%mod;
+    if(b&1) p=p*a%mod;
+    return p;
+}
+void down(int id){
+    int t=lazy[id];
+    if(t==0) return;
+    lazy[id]=0;
+
+    for(int a=0; a<=1; a++){
+            for(int b=0; b<=0; b++){
+                for(int i=0; i<26; i++){
+                    temp[(i+t)%26]=D[a][b][id*2][i];
+                }
+                for(int i=0; i<26; i++){
+                    D[a][b][id*2][i]=temp[i];
+                    temp[i]=0;
+                }
+            }
+        }
+
+    lazy[id*2]=(lazy[id*2]+t)%26;
+
+    for(int a=0; a<=1; a++){
+            for(int b=0; b<=0; b++){
+                for(int i=0; i<26; i++){
+                    temp[(i+t)%26]=D[a][b][id*2+1][i];
+                }
+                for(int i=0; i<26; i++){
+                    D[a][b][id*2+1][i]=temp[i];
+                    temp[i]=0;
+                }
+            }
+        }
+    lazy[id*2+1]=(lazy[id*2+1]+t)%26;
+}
+void build(int id,int l,int r){
+    if(l==r){
+        D[0][0][id][s[l-1]-'a']=T[0][l];
+       // D[0][1][id][s[l-1]-'a']=T[1][l];
+        D[1][0][id][s[l-1]-'a']=T[0][n-l+1];
+      //  D[1][1][id][s[l-1]-'a']=T[1][n-l+1];
+        return;
+    }
+    int mid=(l+r)/2;
+    build(id*2,l,mid);
+    build(id*2+1,mid+1,r);
+    for(int i=0; i<26; i++){
+        D[0][0][id][i]=(D[0][0][id*2][i]+D[0][0][id*2+1][i])%mod;
+     //   D[0][1][id][i]=(D[0][1][id*2][i]+D[0][1][id*2+1][i])%mod;
+        D[1][0][id][i]=(D[1][0][id*2][i]+D[1][0][id*2+1][i])%mod;
+     //   D[1][1][id][i]=(D[1][1][id*2][i]+D[1][1][id*2+1][i])%mod;
+    }
+}
+void update(int id,int l,int r,int &u,int &v,int& val){
+    if(r<u || l>v) return;
+    if(u<=l && r<=v){
+        for(int a=0; a<=1; a++){
+            for(int b=0; b<=0; b++){
+                for(int i=0; i<26; i++){
+                    temp[(i+val)%26]=D[a][b][id][i];
+                }
+                for(int i=0; i<26; i++){
+                    D[a][b][id][i]=temp[i];
+                    temp[i]=0;
+                }
+            }
+        }
+        lazy[id]=(lazy[id]+val)%26;
+        return;
+    }
+    down(id);
+    int mid=(l+r)/2;
+    update(id*2,l,mid,u,v,val);
+    update(id*2+1,mid+1,r,u,v,val);
+     for(int i=0; i<26; i++){
+        D[0][0][id][i]=(D[0][0][id*2][i]+D[0][0][id*2+1][i])%mod;
+        //D[0][1][id][i]=(D[0][1][id*2][i]+D[0][1][id*2+1][i])%mod;
+        D[1][0][id][i]=(D[1][0][id*2][i]+D[1][0][id*2+1][i])%mod;
+        //D[1][1][id][i]=(D[1][1][id*2][i]+D[1][1][id*2+1][i])%mod;
+    }
+}
+void get(int id,int l,int r,int &u,int &v){
+    if(r<u || l>v) return;
+    if(u<=l && r<=v){
+        for(int a=0; a<=1; a++){
+            for(int b=0; b<=0; b++){
+                for(int i=0; i<26; i++)
+                    p[a][b]=(p[a][b]+1ll*D[a][b][id][i]*(i+1)%mod)%mod;
+            }
+        }
+        return;
+    }
+    down(id);
+    int mid=(l+r)/2;
+    get(id*2,l,mid,u,v);
+    get(id*2+1,mid+1,r,u,v);
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>q;
+    cin>>s;
+    T[0][1]=1;
+    T[1][1]=1;
+    L[1]=1;
+    for(int i=2; i<=n; i++){
+        if(s[i-1]==s[i-2]){
+            L[i]=L[i-1];
+        }
+        else L[i]=i;
+    }
+    for(int i=2; i<=n; i++){
+        T[0][i]=T[0][i-1]*base[0]%mod;
+       // T[1][i]=T[1][i-1]*base[1]%mod;
+    }
+    for(int i=1; i<=n; i++){
+        for(int j=0; j<26; j++){
+            K[0][i][j]=(K[0][i-1][j]*base[0]%mod+(j+1))%mod;
+         //   K[1][i][j]=(K[1][i-1][j]*base[1]%mod+(j+1))%mod;
+        }
+    }
+    build(1,1,n);
+    while(q--){
+        cin>>type;
+        if(type==1){
+            cin>>x>>y>>k;
+            if(k==0) continue;
+            update(1,1,n,x,y,k);
+        }
+        else{
+            cin>>x>>y;
+            p[0][0]=0;
+           // p[0][1]=0;
+            p[1][0]=0;
+          //  p[1][1]=0;
+            get(1,1,n,x,y);
+            for(int a=0; a<=1; a++){
+                for(int b=0; b<=0; b++){
+                    if(!a) p[a][b]=p[a][b]*lt(T[b][x],mod-2)%mod;
+                    else p[a][b]=p[a][b]*lt(T[b][n-y+1],mod-2)%mod;
+                }
+            }
+            //cout<<((p[0][0]<<30ll)|p[0][1])<<' '<<((p[1][0]<<30ll)|p[1][1])<<'\n'
+            bool OK=false;
+            for(int i=0; i<26; i++){
+                if(((p[0][0]<<30ll)|p[0][1])==((K[0][y-x+1][i]<<30)|K[1][y-x+1][i])){
+                    OK=true;
+                    break;
+                }
+            }
+            if(OK) {cout<<0<<'\n'; continue;}
+            if(((p[0][0]<<30ll)|p[0][1])!=((p[1][0]<<30ll)|p[1][1])){
+                cout<<y-x+1;
+            }
+            else cout<<y-x;
+            cout<<'\n';
+        }
+    }
+
+
+
+
+
+
+    return 0;
+}
+/*
+
+7 4
+abaabcd
+2 2 5
+2 3 4
+2 2 6
+2 1 7
+*/
