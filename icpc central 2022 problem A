@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+
+
+int dp[305][305][305],n,k,ans,cnt;
+string s;
+bool F(int l,int r,int p1, int p2){
+   // cout<<l<<' '<<r<<' '<<p1<<' '<<p2<<'\n';
+    if(p2==k) return dp[l][r][p1]=true;
+    if(p1==k) return dp[l][r][p1]=false;
+    if(dp[l][r][p1]!=-1) return dp[l][r][p1];
+
+
+    bool kq1=F(l+1,r,p2,(p1+(s[l-1]=='B')));
+    bool kq2=F(l,r-1,p2,(p1+(s[r-1]=='B')));
+   // cout<<l<<' '<<r<<' '<<p1<<' '<<kq1<<' '<<kq2<<'\n';
+    return dp[l][r][p1]=(min(kq1,kq2)==false);
+}
+int main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>k;
+    cin>>s;
+    for(int i=1; i<=n; i++){
+        for(int j=i; j<=n; j++){
+            for(int z=0; z<=k; z++){
+                dp[i][j][z]=-1;
+            }
+        }
+    }
+    //for(char v: s) if(v=='B') cnt++;
+    //dp[i][j][k]
+    if(F(1,n,0,0)) cout<<"YES";
+    else cout<<"NO";
+}
