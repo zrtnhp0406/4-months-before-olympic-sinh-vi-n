@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ii pair<int,int>
+#define st first
+#define nd second
+const int N=2e6+10;
+int n,q,x,A[N],l,r,t,k,D[N],ans[N];
+multiset<int> ds;
+void inc(int a){
+    if(!ds.empty() && D[a]>0) ds.erase(ds.find(D[a]));
+    D[a]++;
+    ds.insert(D[a]);
+}
+
+void dec(int a){
+    if(!ds.empty() && D[a]>0) ds.erase(ds.find(D[a]));
+    D[a]--;
+    ds.insert(D[a]);
+}
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+   cin>>t;
+   while(t--){
+        cin>>n>>k>>q;
+        for(int i=1; i<=n; i++){
+            cin>>A[i];
+            A[i]=A[i]-i+n;
+        }
+        for(int i=1; i<k; i++){
+            inc(A[i]);
+        }
+        for(int i=k; i<=n; i++){
+            inc(A[i]);
+            if(!ds.empty()) ans[i]=*ds.rbegin();
+            dec(A[i-k+1]);
+        }
+        while(q--){
+            cin>>l>>r;
+            cout<<(r-l+1)-ans[r]<<'\n';
+        }
+        ds.clear();
+        for(int i=1; i<=n; i++){
+            D[A[i]]=0;
+        }
+   }
+
+   return 0;
+}
