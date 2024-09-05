@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define ll pair<int,int>
+#define st first
+#define nd second
+const int N=2e5+10;
+
+int ans,n,nxt[N];
+int vs[N];
+ll B[N],A[N];
+set<int> ds;
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n;
+    for(int i=1; i<=n; i++){
+        cin>>A[i].st;
+    }
+    for(int i=1; i<=n; i++){
+        cin>>A[i].nd;
+        B[i]={A[i].nd,i};
+        ds.insert(i);
+    }
+    sort(B+1,B+n+1);
+    for(int i=1; i<=n; i++){
+        while(!ds.empty() && A[B[i].nd].st--){
+            auto v=ds.upper_bound(B[i].nd);
+            if(v==ds.end()){
+                ds.erase(ds.begin());
+            }
+            else{
+                ds.erase(v);
+            }
+            ans+=B[i].st;
+        }
+    }
+    if(!ds.empty()) cout<<-1;
+    else cout<<ans;
+
+
+
+
+
+    return 0;
+}
