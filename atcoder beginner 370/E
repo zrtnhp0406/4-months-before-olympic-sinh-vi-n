@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod=998244353;
+const int N=4e5+10;
+int n,ans,sum,x,d,k;
+map<int,int> ds;
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>n>>k;
+    ds[0]=1;
+    d=1;
+    while(n--){
+        cin>>x;
+        sum+=x;
+        //cout<<ds[sum-k]<<' ';
+        ans=(d-ds[sum-k]+mod)%mod;
+        ds[sum]=(ds[sum]+ans)%mod;
+        d=(d+ans)%mod;
+    }
+    cout<<ans;
+    return 0;
+}
+//sum[i]-sum[j]=k
+//sum[i]-k=sum[j];
