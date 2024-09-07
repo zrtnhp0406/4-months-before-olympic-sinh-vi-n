@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int N=4e5+10;
+int n,ans,Q,x,y,H,W;
+set<int> R[N],C[N];
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>H>>W>>Q;
+    for(int i=1; i<=H; i++){
+        for(int j=1; j<=W; j++){
+            R[i].insert(j);
+        }
+    }
+    for(int i=1; i<=W; i++){
+        for(int j=1; j<=H; j++){
+            C[i].insert(j);
+        }
+    }
+    ans=H*W;
+    //cin>>Q;
+    while(Q--){
+        cin>>x>>y;
+        auto F=R[x].lower_bound(y);
+        if(F!=R[x].end() && *F==y){
+            R[x].erase(F);
+            C[y].erase(C[y].find(x));
+            ans--;
+        }
+        else{
+            auto F2=F;
+            if(F2!=R[x].begin()){
+                F2--;
+                C[*F2].erase(x);
+                R[x].erase(F2);
+                ans--;
+            }
+            if(F!=R[x].end()){
+                C[*F].erase(x);
+                R[x].erase(F);
+                ans--;
+            }
+
+            F=C[y].lower_bound(x);
+            F2=F;
+            if(F2!=C[y].begin()){
+                F2--;
+                R[*F2].erase(y);
+                C[y].erase(F2);
+                ans--;
+            }
+            if(F!=C[y].end()){
+                R[*F].erase(y);
+                C[y].erase(F);
+                ans--;
+            }
+        }
+    }
+    cout<<ans;
+    return 0;
+}
