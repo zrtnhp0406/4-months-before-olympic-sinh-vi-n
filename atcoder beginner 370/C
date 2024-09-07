@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int N=1e6+10;
+string s,t;
+vector<string> ans;
+signed main(){
+    ios::sync_with_stdio(0);cin.tie(0);
+    cin>>s>>t;
+    int n=s.size();
+    while(s!=t){
+        for(int i=0; i<n; i++){
+            if(s[i]>t[i]){
+                s[i]=t[i];
+                ans.push_back(s);
+                goto nxt;
+            }
+        }
+        for(int i=n-1; i>=0; i--){
+            if(s[i]!=t[i]){
+                s[i]=t[i];
+                ans.push_back(s);
+                goto nxt;
+            }
+        }
+        nxt:;
+    }
+    cout<<ans.size()<<'\n';
+    for(string v: ans) cout<<v<<'\n';
+    return 0;
+}
