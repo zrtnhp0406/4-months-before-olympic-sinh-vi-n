@@ -1,0 +1,13 @@
+class Solution {
+public:
+    long long ans=0;
+    long long ma=0;
+    long long findMaximumScore(vector<int>& nums) {
+        ma=nums[0];
+        for(int i=1; i<nums.size(); i++){
+            ans+=ma;
+            ma=max(ma,nums[i]*1ll);
+        }
+        return ans;
+    }
+};
