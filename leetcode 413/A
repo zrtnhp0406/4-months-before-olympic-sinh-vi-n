@@ -1,0 +1,28 @@
+class Solution {
+public:
+    string dapan;
+    void trans(int a){
+        vector<int> ans;
+        while(a>0){
+            ans.push_back(a%2);
+            a/=2;
+        }
+        reverse(ans.begin(),ans.end());
+        for(int v: ans) dapan+=(v+'0');
+    }
+    string convertDateToBinary(string date) {
+        int so=0;
+        for(char v: date){
+            if(v!='-'){
+                so=so*10+(v-'0');                
+            }
+            else{
+                trans(so);
+                dapan+=v;
+                so=0;
+            }
+        }
+        trans(so);
+        return dapan;
+    }
+};
